@@ -1,23 +1,43 @@
+import classes.Cell
 import classes.Point
+import classes.Solution
 
-class Algorithm(private val board: Array<Array<Boolean>>) {
-    private val intBoard = Array(board.size) {
-        Array(board[0].size) {
-            0
+class Algorithm(private val board: Array<Array<Cell>>) {
+    private val intBoard = generateIntArray(board)
+
+    private fun generateIntArray(board: Array<Array<Cell>>): Array<Array<Int>> {
+        val hg = board.size
+        val wd = board[0].size
+
+        val array = Array(hg) {
+            Array(wd) {
+                0
+            }
         }
+
+        for ((y, row) in board.withIndex()) {
+            for ((x, cell) in row.withIndex()) {
+                array[y][x] = cell.value
+            }
+        }
+
+        for (row in array)
+            println(row.contentDeepToString())
+        return array
     }
 
-    fun solve(start: Point, end: Point): ArrayList<Point> {
-        intBoard[start.y][start.x] = Int.MAX_VALUE
-        intBoard[end.y][end.x] = Int.MIN_VALUE
 
-        printBoards()
+    fun solve(): Solution {
+        val startEnd = getStartEnd()
+        val start = startEnd.first
+        val end = startEnd.second
 
         var done = false
         var count = 0
         var lastPoints = arrayListOf(
             start
         )
+
         while (!done) {
             count++
             done = true
@@ -29,8 +49,9 @@ class Algorithm(private val board: Array<Array<Boolean>>) {
 
                 for (p in positions) {
                     if (!inArray(p)) continue
-
-                    if (intBoard[p.y][p.x] == 0) {
+                    else if (board[p.y][p.x] == Cell.WALL) {
+                        continue
+                    } else if (intBoard[p.y][p.x] == Cell.PATH.value) {
                         newLastPoints.add(p)
                         done = false
                         intBoard[p.y][p.x] = count
@@ -38,11 +59,18 @@ class Algorithm(private val board: Array<Array<Boolean>>) {
                 }
                 lastPoints = newLastPoints
             }
+
         }
 
-        printBoards()
+        for (row in board) {
+            println(row.contentDeepToString())
+        }
+        for (row in intBoard) {
+            println(row.contentDeepToString())
+        }
 
-        return backtrack(end)
+        val backtracked = backtrack(end)
+        return Solution(intBoard, backtracked)
     }
 
     private fun getNeighbors(point: Point): Array<Point> {
@@ -60,23 +88,24 @@ class Algorithm(private val board: Array<Array<Boolean>>) {
 
     private fun backtrack(end: Point): ArrayList<Point> {
         var current = end
-        val path = arrayListOf<Point>()
+        val path = arrayListOf(
+            end
+        )
         whileLoop@ while (true) {
             val neighbors = getNeighbors(current)
 
             var lowest = Int.MAX_VALUE
-            var lowestPoint = Point(Int.MAX_VALUE, Int.MAX_VALUE)
+            var lowestPoint = Point(0, 0)
             for (p in neighbors) {
                 if (!inArray(p)) continue
-                if (intBoard[p.y][p.x] == Int.MIN_VALUE) continue
+                if (intBoard[p.y][p.x] == Cell.GOAL.value) continue
 
-                if (intBoard[p.y][p.x] == Int.MAX_VALUE) {
+                if (intBoard[p.y][p.x] == Cell.STRT.value) {
                     path.add(p)
                     break@whileLoop
                 }
 
-                println("current: ${lowest}; new: ${intBoard[p.y][p.x]}")
-                if (intBoard[p.y][p.x] < lowest) {
+                if (intBoard[p.y][p.x] < lowest && intBoard[p.y][p.x] != -1) {
                     lowest = intBoard[p.y][p.x]
                     lowestPoint = p
                 }
@@ -90,19 +119,16 @@ class Algorithm(private val board: Array<Array<Boolean>>) {
         return path
     }
 
-    private fun printBoards() {
-        println("-".repeat(board[0].contentToString().length))
-        println("[")
-
-        for (y in board.indices) {
-            print("[")
-            for (x in 0 until board[y].size) {
-                print("${board[y][x]} -> ${intBoard[y][x]},")
+    private fun getStartEnd(): Pair<Point, Point> {
+        var end = Point(-1, -1)
+        var start = Point(-1, -1)
+        for ((y, row) in board.withIndex()) {
+            for ((x, cell) in row.withIndex()) {
+                if (cell == Cell.GOAL) end = Point(y, x)
+                else if (cell == Cell.STRT) start = Point(y, x)
             }
-            print("],\n")
         }
 
-        println("]")
-        println("-".repeat(board[0].contentToString().length))
+        return Pair(start, end)
     }
 }

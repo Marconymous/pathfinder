@@ -12,7 +12,6 @@ repositories {
 
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    implementation 'no.tornado:tornadofx:1.7.20'
 }
 
 test {
