@@ -1,40 +1,45 @@
-import classes.Cell
-import classes.GUI
-import tornadofx.App
-import tornadofx.launch
+import androidx.compose.desktop.Window
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import classes.Board
+import kotlin.math.min
 
-
-class ViewGUI : App(GUI::class)
-
-fun main(args: Array<String>) {
-    val board = Cell.createCellArray(
-        arrayOf(
-            arrayOf("O", "O", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"),
-            arrayOf("O", "E", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"),
-            arrayOf("O", "X", "X", "X", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O", "O", "O"),
-            arrayOf("O", "O", "X", "O", "X", "S", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O"),
-            arrayOf("O", "X", "X", "O", "O", "O", "O", "O", "X", "O", "O", "O", "O", "O", "O", "O"),
-            arrayOf("O", "O", "O", "X", "X", "X", "X", "O", "X", "O", "O", "O", "X", "O", "O", "O"),
-            arrayOf("O", "O", "X", "O", "O", "O", "X", "O", "O", "O", "O", "X", "O", "O", "O", "O"),
-            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "X", "O", "X", "X", "O", "O", "O", "O"),
-            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "X", "O", "O", "O", "X", "O", "O", "O"),
-            arrayOf("O", "O", "X", "X", "X", "X", "X", "O", "O", "O", "O", "O", "O", "X", "O", "O"),
-            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "O", "O", "O", "O", "O", "X", "O", "O"),
-            arrayOf("O", "O", "O", "X", "O", "O", "X", "O", "O", "O", "O", "O", "O", "O", "X", "O"),
-            arrayOf("O", "O", "O", "O", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O", "X", "O"),
-            arrayOf("O", "O", "O", "O", "O", "X", "X", "O", "O", "O", "O", "O", "O", "X", "O", "O"),
-            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "O", "O", "O", "O", "X", "X", "O", "O"),
-            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "O", "O", "O", "O", "X", "O", "O", "O"),
-            arrayOf("O", "O", "O", "O", "O", "O", "X", "X", "X", "X", "X", "X", "X", "O", "O", "O"),
-            arrayOf("O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"),
-        )
-    )
+fun main() = Window {
+    val board = Board.generateRandom(10, 20)
 
     val algo = Algorithm(board)
     val solved = algo.solve()
+    val view = solved.createView()
 
-    Algorithm.createFile(solved.grid, "int.txt")
-    Algorithm.createFile(solved.createView(), "solution.txt")
+    println(view.contentDeepToString())
 
-    launch<ViewGUI>(args)
+    MaterialTheme {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val cellHeight = size.height / view.size
+            val cellWidth = size.width / view[0].size
+            val sze = min(cellHeight, cellWidth)
+            val cellSize = Size(sze, sze)
+
+            for ((y, row) in view.withIndex()) {
+                for ((x, cell) in row.withIndex()) {
+                    val color = when (cell) {
+                        "." -> Color.Green
+                        "X" -> Color.Red
+                        "*" -> Color.Blue
+                        else -> Color.Black
+                    }
+                    drawRect(
+                        color = color,
+                        size = cellSize,
+                        topLeft = Offset(x = cellSize.height * x, y = cellSize.width * y)
+                    )
+                }
+            }
+        }
+    }
 }
