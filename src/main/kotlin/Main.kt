@@ -1,10 +1,12 @@
 import classes.Cell
-import classes.Point
-import classes.Solution
+import classes.GUI
+import tornadofx.App
+import tornadofx.launch
+
+
+class ViewGUI : App(GUI::class)
 
 fun main(args: Array<String>) {
-//    launch<PathfinderApp>(args)
-
     val board = Cell.createCellArray(
         arrayOf(
             arrayOf("O", "O", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"),
@@ -33,4 +35,6 @@ fun main(args: Array<String>) {
 
     Algorithm.createFile(solved.grid, "int.txt")
     Algorithm.createFile(solved.createView(), "solution.txt")
+
+    launch<ViewGUI>(args)
 }
