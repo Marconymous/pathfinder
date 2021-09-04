@@ -1,6 +1,7 @@
 import classes.Cell
 import classes.Point
 import classes.Solution
+import java.io.File
 
 class Algorithm(private val board: Array<Array<Cell>>) {
     private val intBoard = generateIntArray(board)
@@ -130,5 +131,25 @@ class Algorithm(private val board: Array<Array<Cell>>) {
         }
 
         return Pair(start, end)
+    }
+
+    companion object {
+        fun <T> createFile(array: Array<Array<T>>, name: String) {
+            val file = initFile(name)
+            var string = ""
+            for (row in array) {
+                for (cell in row) {
+                    string += " $cell "
+                }
+                string += System.lineSeparator()
+            }
+            file.writeText(string)
+        }
+
+        private fun initFile(name: String): File {
+            val file = File(name)
+            file.createNewFile()
+            return file
+        }
     }
 }

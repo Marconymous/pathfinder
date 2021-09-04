@@ -5,52 +5,32 @@ import classes.Solution
 fun main(args: Array<String>) {
 //    launch<PathfinderApp>(args)
 
-    val board = arrayOf(
-        arrayOf(Cell.STRT, Cell.PATH, Cell.PATH, Cell.WALL, Cell.PATH, Cell.WALL, Cell.PATH, Cell.PATH),
-        arrayOf(Cell.WALL, Cell.WALL, Cell.PATH, Cell.WALL, Cell.PATH, Cell.PATH, Cell.PATH, Cell.PATH),
-        arrayOf(Cell.WALL, Cell.PATH, Cell.PATH, Cell.WALL, Cell.PATH, Cell.WALL, Cell.WALL, Cell.PATH),
-        arrayOf(Cell.WALL, Cell.PATH, Cell.WALL, Cell.WALL, Cell.PATH, Cell.WALL, Cell.WALL, Cell.PATH),
-        arrayOf(Cell.WALL, Cell.PATH, Cell.PATH, Cell.WALL, Cell.PATH, Cell.WALL, Cell.WALL, Cell.PATH),
-        arrayOf(Cell.WALL, Cell.PATH, Cell.PATH, Cell.PATH, Cell.PATH, Cell.WALL, Cell.GOAL, Cell.PATH),
+    val board = Cell.createCellArray(
+        arrayOf(
+            arrayOf("O", "O", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"),
+            arrayOf("O", "E", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"),
+            arrayOf("O", "X", "X", "X", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O", "O", "O"),
+            arrayOf("O", "O", "X", "O", "X", "S", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O"),
+            arrayOf("O", "X", "X", "O", "O", "O", "O", "O", "X", "O", "O", "O", "O", "O", "O", "O"),
+            arrayOf("O", "O", "O", "X", "X", "X", "X", "O", "X", "O", "O", "O", "X", "O", "O", "O"),
+            arrayOf("O", "O", "X", "O", "O", "O", "X", "O", "O", "O", "O", "X", "O", "O", "O", "O"),
+            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "X", "O", "X", "X", "O", "O", "O", "O"),
+            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "X", "O", "O", "O", "X", "O", "O", "O"),
+            arrayOf("O", "O", "X", "X", "X", "X", "X", "O", "O", "O", "O", "O", "O", "X", "O", "O"),
+            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "O", "O", "O", "O", "O", "X", "O", "O"),
+            arrayOf("O", "O", "O", "X", "O", "O", "X", "O", "O", "O", "O", "O", "O", "O", "X", "O"),
+            arrayOf("O", "O", "O", "O", "X", "O", "X", "O", "O", "O", "O", "O", "O", "O", "X", "O"),
+            arrayOf("O", "O", "O", "O", "O", "X", "X", "O", "O", "O", "O", "O", "O", "X", "O", "O"),
+            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "O", "O", "O", "O", "X", "X", "O", "O"),
+            arrayOf("O", "O", "O", "O", "O", "O", "X", "O", "O", "O", "O", "O", "X", "O", "O", "O"),
+            arrayOf("O", "O", "O", "O", "O", "O", "X", "X", "X", "X", "X", "X", "X", "O", "O", "O"),
+            arrayOf("O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O", "O"),
+        )
     )
 
     val algo = Algorithm(board)
     val solved = algo.solve()
 
-
-    printSolution(solved)
-}
-
-fun printSolution(solution: Solution) {
-    val height = solution.grid.size
-    val width = solution.grid[0].size
-
-    val show = Array(height) {
-        Array(width) { "" }
-    }
-
-    for ((y, row) in solution.grid.withIndex()) {
-        for ((x, cell) in row.withIndex()) {
-            val s = when (cell) {
-                -1 -> "X"
-                else -> "."
-            }
-            show[y][x] = s
-        }
-    }
-
-    for ((index, point) in solution.path.withIndex()) {
-        val s: String = when (index) {
-            0 -> "E"
-            solution.path.size - 1 -> "S"
-            else -> "☐"
-        }
-
-        show[point.y][point.x] = s
-    }
-
-
-    for (row in show) {
-        println(row.contentToString())
-    }
+    Algorithm.createFile(solved.grid, "int.txt")
+    Algorithm.createFile(solved.createView(), "solution.txt")
 }
