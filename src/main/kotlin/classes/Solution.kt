@@ -1,6 +1,8 @@
 package classes
 
-class Solution(val grid: Array<Array<Int>>, val path: ArrayList<Point>) {
+class Solution(private val grid: Array<Array<Int>>, private val path: ArrayList<Point>) {
+    private val hasPath = path.size <= 0
+
     fun createView(): Array<Array<String>> {
         val height = this.grid.size
         val width = this.grid[0].size

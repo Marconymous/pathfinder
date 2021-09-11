@@ -1386,7 +1386,19 @@ class Board {
             )
         }
 
+        fun blocked(): Array<Array<Cell>> {
+            return Cell.createCellArray(
+                arrayOf(
+                    arrayOf("S", "X", "E")
+                )
+            )
+        }
+
         fun generateRandom(ySize: Int, xSize: Int): Array<Array<Cell>> {
+            fun generateRandomPos(): Point {
+                return Point((Math.random() * ySize).toInt(), (Math.random() * xSize).toInt())
+            }
+
             val array = Array(ySize) {
                 Array(xSize) {
                     Cell.PATH
@@ -1395,7 +1407,7 @@ class Board {
 
             for (y in 0 until ySize) {
                 for (x in 0 until xSize) {
-                    val rand = (Math.random() * 3).toInt()
+                    val rand = (Math.random() * 10).toInt()
 
                     if (rand == 2) {
                         array[y][x] = Cell.WALL
@@ -1403,8 +1415,17 @@ class Board {
                 }
             }
 
-            array[(Math.random() * ySize).toInt()][(Math.random() * xSize).toInt()] = Cell.STRT
-            array[(Math.random() * ySize).toInt()][(Math.random() * xSize).toInt()] = Cell.GOAL
+            for (i in 0..1) {
+                val cellType = when (i) {
+                    0-> Cell.STRT
+                    else -> Cell.GOAL
+                }
+                val point = generateRandomPos()
+
+                println(point)
+
+                array[point.y][point.x] = cellType
+            }
 
             return array
         }

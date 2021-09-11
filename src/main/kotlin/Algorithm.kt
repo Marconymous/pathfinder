@@ -35,13 +35,15 @@ class Algorithm(private val board: Array<Array<Cell>>) {
 
         var done = false
         var count = 0
+        var hasSolution = true
         var lastPoints = arrayListOf(
             start
         )
 
-        while (!done) {
+        whileLoop@ while (!done) {
             count++
             done = true
+            var cellChange = true
 
             val newLastPoints = arrayListOf<Point>()
 
@@ -51,17 +53,21 @@ class Algorithm(private val board: Array<Array<Cell>>) {
                 for (p in positions) {
                     if (!inArray(p)) continue
                     else if (board[p.y][p.x] == Cell.WALL) {
+                        cellChange = false
                         continue
                     } else if (intBoard[p.y][p.x] == Cell.PATH.value) {
+                        cellChange = true
                         newLastPoints.add(p)
                         done = false
                         intBoard[p.y][p.x] = count
                     }
                 }
-                lastPoints = newLastPoints
             }
-
+            hasSolution = cellChange
+            lastPoints = newLastPoints
         }
+
+        println("hasSolution = $hasSolution")
 
         for (row in board) {
             println(row.contentDeepToString())
@@ -70,7 +76,7 @@ class Algorithm(private val board: Array<Array<Cell>>) {
             println(row.contentDeepToString())
         }
 
-        val backtracked = backtrack(end)
+        val backtracked = if (hasSolution) backtrack(end) else arrayListOf()
         return Solution(intBoard, backtracked)
     }
 
